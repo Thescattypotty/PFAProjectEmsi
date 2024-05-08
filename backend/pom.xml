@@ -141,14 +141,13 @@
 			<version>v3-rev411-1.25.0</version>
 		</dependency>
 		-->
-		<!-- 
-		# https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail 
+		
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-mail -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 			<version>3.2.4</version>
 		</dependency>
-		-->
 
 	</dependencies>
 
