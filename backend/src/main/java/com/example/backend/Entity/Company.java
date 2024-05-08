@@ -10,7 +10,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
@@ -19,6 +18,9 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import com.example.backend.EntityListener.CreatedByListener;
 import com.example.backend.Enum.EBusinessType;
@@ -34,13 +36,12 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "company")
 @EntityListeners(CreatedByListener.class)
-public class Company extends BaseEntity
-{
+public class Company extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name="company_name", nullable = false)
+    @Column(name = "company_name", nullable = false)
     private String companyName;
 
     @Column(name = "company_logo", nullable = true)
@@ -57,7 +58,7 @@ public class Company extends BaseEntity
     @Enumerated(EnumType.STRING)
     @Column(name = "industry", nullable = true)
     private EIndustry industry;
-    
+
     @Enumerated(EnumType.STRING)
     @Column(name = "business_type", nullable = true)
     private EBusinessType businessType;
@@ -69,14 +70,12 @@ public class Company extends BaseEntity
     @Column(name = "website", nullable = true)
     private String website;
 
-    @ManyToOne(optional = false)
-    private Contact salesOwner;
-
-    @OneToMany(mappedBy = "company", cascade = CascadeType.ALL , orphanRemoval = true)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Contact> contacts = new ArrayList<>();
 
     public Company(String companyName, byte[] companyLogo, ECompanySize companySize, double totalIncome,
-            EIndustry industry, EBusinessType businessType, ECountry country, String website, Contact salesOwner,
+            EIndustry industry, EBusinessType businessType, ECountry country, String website,
             List<Contact> contacts) {
         this.companyName = companyName;
         this.companyLogo = companyLogo;
@@ -86,12 +85,11 @@ public class Company extends BaseEntity
         this.businessType = businessType;
         this.country = country;
         this.website = website;
-        this.salesOwner = salesOwner;
         this.contacts = contacts;
     }
-    
+
     public Company(String companyName, byte[] companyLogo, ECompanySize companySize, double totalIncome,
-            EIndustry industry, EBusinessType businessType, ECountry country, String website, Contact salesOwner) {
+            EIndustry industry, EBusinessType businessType, ECountry country, String website) {
         this.companyName = companyName;
         this.companyLogo = companyLogo;
         this.companySize = companySize;
@@ -100,11 +98,9 @@ public class Company extends BaseEntity
         this.businessType = businessType;
         this.country = country;
         this.website = website;
-        this.salesOwner = salesOwner;
     }
 
-    public void addContact(Contact contact)
-    {
+    public void addContact(Contact contact) {
         this.contacts.add(contact);
     }
 

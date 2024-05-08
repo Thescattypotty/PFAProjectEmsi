@@ -20,6 +20,10 @@ import lombok.Setter;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.util.Date;
 
 import com.example.backend.EntityListener.CreatedByListener;
@@ -34,8 +38,7 @@ import java.util.ArrayList;
 @Entity
 @Table(name = "contacts")
 @EntityListeners(CreatedByListener.class)
-public class Contact extends BaseEntity
-{
+public class Contact extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,17 +62,18 @@ public class Contact extends BaseEntity
     private byte[] image;
 
     @Enumerated(EnumType.STRING)
-    @Column(name= "timezone", nullable = true)
+    @Column(name = "timezone", nullable = true)
     private ETimeZone timeZone;
-    
+
     @ManyToOne
     private Company company;
 
-    @OneToMany(mappedBy = "contact", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "contact", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private List<Interaction> interactions = new ArrayList<>();
 
-
-    public Contact(String firstName, String lastName, @Email String email, String phone, byte[] image, ETimeZone timeZone ,
+    public Contact(String firstName, String lastName, @Email String email, String phone, byte[] image,
+            ETimeZone timeZone,
             Company company, List<Interaction> interactions) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -80,7 +84,7 @@ public class Contact extends BaseEntity
         this.company = company;
         this.interactions = interactions;
     }
-    
+
     public Contact(String firstName, String lastName, @Email String email, String phone, byte[] image,
             ETimeZone timeZone, User createdBy, Date createdAt) {
         this.firstName = firstName;
@@ -93,11 +97,23 @@ public class Contact extends BaseEntity
         this.setCreatedAt(createdAt);
     }
 
-    public void addInteraction(Interaction interaction){
+    public Contact(String firstName, String lastName, @Email String email, String phone, byte[] image,
+            ETimeZone timeZone, User createdBy, Date createdAt, Company company) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.image = image;
+        this.timeZone = timeZone;
+        this.company = company;
+    }
+
+    public void addInteraction(Interaction interaction) {
         this.interactions.add(interaction);
     }
-    public void addInteractions(List<Interaction> interactions)
-    {
+
+    public void addInteractions(List<Interaction> interactions) {
         this.interactions.addAll(interactions);
     }
+
 }

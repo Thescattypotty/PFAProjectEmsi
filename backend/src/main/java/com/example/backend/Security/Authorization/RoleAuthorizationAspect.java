@@ -8,6 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.example.backend.Annotation.RequiresRole;
+import com.example.backend.Exception.AccessDeniedException;
 
 @Aspect
 @Component
@@ -17,7 +18,7 @@ public class RoleAuthorizationAspect {
     public void checkRole(JoinPoint joinPoint, RequiresRole requiresRole) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !hasRequiredRole(authentication, requiresRole.value())) {
-            throw new SecurityException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
     }
 

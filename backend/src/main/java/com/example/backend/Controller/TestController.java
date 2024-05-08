@@ -6,25 +6,27 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
-import com.example.backend.Entity.*;
 
 import com.example.backend.Annotation.RequiresRole;
+import com.example.backend.Entity.Company;
+import com.example.backend.Entity.Contact;
+import com.example.backend.Entity.Interaction;
 import com.example.backend.EntityRepository.CompanyRepository;
 import com.example.backend.EntityRepository.ContactRepository;
 import com.example.backend.EntityRepository.InteractionRepository;
+
+import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/test")
 public class TestController {
 
-	@Autowired 
-	private ContactRepository contactRepository;
 
 	@Autowired
 	private CompanyRepository companyRepository;
-
+	@Autowired 
+	private ContactRepository contactRepository;
 	@Autowired
 	private InteractionRepository interactionRepository;
 

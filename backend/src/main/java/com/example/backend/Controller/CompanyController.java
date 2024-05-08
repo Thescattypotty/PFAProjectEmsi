@@ -1,6 +1,7 @@
 package com.example.backend.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,7 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Annotation.RequiresPermission;
 import com.example.backend.Annotation.RequiresRole;
-import com.example.backend.EntityDto.CompanyDto;
+import com.example.backend.Entity.Company;
+import com.example.backend.MapToResponse.CompanyMapperResponse;
+import com.example.backend.Payload.Response.CompanyResponse;
 import com.example.backend.Services.CompanyService;
 
 
@@ -32,36 +35,39 @@ public class CompanyController {
 
     @PostMapping
     @RequiresPermission({"CREATE_COMPANY"})
-    public ResponseEntity<CompanyDto> createCompany(@RequestBody CompanyDto companyDto)
+    public ResponseEntity<CompanyResponse> createCompany(@RequestBody Company companyDto)
     {
-        CompanyDto SavedCOmpanyDto = companyService.createCompany(companyDto);
-        return new ResponseEntity<>(SavedCOmpanyDto, HttpStatus.CREATED);
+        Company SavedCompanyDto = companyService.createCompany(companyDto);
+        return new ResponseEntity<>(CompanyMapperResponse.MapToCompanyResponse(SavedCompanyDto), HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     @RequiresPermission({"ACCESS_COMPANY"})
-    public ResponseEntity<CompanyDto> getCompanyById(@PathVariable("id") Long companyId)
+    public ResponseEntity<CompanyResponse> getCompanyById(@PathVariable("id") Long companyId)
     {
-        CompanyDto companyDto = companyService.getCompanyById(companyId);
-        return ResponseEntity.ok(companyDto);
+        Company companyDto = companyService.getCompanyById(companyId);
+        return ResponseEntity.ok(CompanyMapperResponse.MapToCompanyResponse(companyDto));
     }
 
     @GetMapping
     @RequiresPermission({ "ACCESS_COMPANY" })
-    public ResponseEntity<List<CompanyDto>> getAllCompanys() {
-        List<CompanyDto> companys = companyService.getAllCompanys();
-        return ResponseEntity.ok(companys);
+    public ResponseEntity<List<CompanyResponse>> getAllCompanys() {
+        List<Company> companys = companyService.getAllCompanys();
+        return ResponseEntity.ok(
+            companys.stream().map(CompanyMapperResponse::MapToCompanyResponse)
+            .collect(Collectors.toList())
+        );
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @RequiresPermission({"MODIFY_COMPANY"})
-    public ResponseEntity<CompanyDto> updateCompany(@PathVariable("id")Long companyId, CompanyDto UpdatedCompanyDto)
+    public ResponseEntity<CompanyResponse> updateCompany(@PathVariable("id")Long companyId, Company UpdatedCompanyDto)
     {
-        CompanyDto company = companyService.updateCompany(companyId, UpdatedCompanyDto);
-        return ResponseEntity.ok(company);
+        Company company = companyService.updateCompany(companyId, UpdatedCompanyDto);
+        return ResponseEntity.ok(CompanyMapperResponse.MapToCompanyResponse(company));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @RequiresPermission({"DELETE_COMPANY"})
     public ResponseEntity<String> deleteCompany(@PathVariable("id") Long companyId)
     {

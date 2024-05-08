@@ -13,6 +13,7 @@ import com.example.backend.Annotation.RequiresPermission;
 import com.example.backend.Entity.User;
 import com.example.backend.EntityRepository.UserRepository;
 import com.example.backend.Enum.EPermission;
+import com.example.backend.Exception.AccessDeniedException;
 import com.example.backend.Security.Services.UserDetailsImplementation;
 
 @Aspect
@@ -27,7 +28,7 @@ public class PermissionAuthorizationAspect {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if(authentication == null || !hasRequiredPermission(authentication , requiresPermission.value()))
         {
-            throw new SecurityException("Access denied");
+            throw new AccessDeniedException("Access denied");
         }
     }
     private boolean hasRequiredPermission(Authentication authentication , String[] requiredPermissions)

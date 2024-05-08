@@ -1,6 +1,7 @@
 package com.example.backend.Controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,8 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.backend.Annotation.RequiresPermission;
 import com.example.backend.Annotation.RequiresRole;
-import com.example.backend.EntityDto.ContactDto;
-import com.example.backend.EntityDto.InteractionDto;
+import com.example.backend.Entity.Contact;
+import com.example.backend.Entity.Interaction;
+import com.example.backend.MapToResponse.ContactMapperResponse;
+import com.example.backend.MapToResponse.InteractionMapperResponse;
+import com.example.backend.Payload.Response.ContactResponse;
+import com.example.backend.Payload.Response.InteractionResponse;
 import com.example.backend.Services.ContactService;
 import com.example.backend.Services.InteractionService;
 
@@ -37,53 +42,56 @@ public class ContactController {
 
     @PostMapping
     @RequiresPermission({"CREATE_CONTACT"})
-    public ResponseEntity<ContactDto> createContact(@RequestBody ContactDto contactDto)
+    public ResponseEntity<ContactResponse> createContact(@RequestBody Contact contactDto)
     {
-        ContactDto savedContactDto = contactService.createContact(contactDto);
-        return new ResponseEntity<>(savedContactDto, HttpStatus.CREATED);
+        Contact savedContactDto = contactService.createContact(contactDto);
+        return new ResponseEntity<>(ContactMapperResponse.MapToContactResponse(savedContactDto), HttpStatus.CREATED);
     }
     @PostMapping("/{id}/interaction")
     @RequiresPermission({"CREATE_INTERSECTION","MODIFY_CONTACT"})
-    public ResponseEntity<ContactDto> addInteractionToContact(@PathVariable("id") Long contactId, @RequestBody InteractionDto interactionDto)
+    public ResponseEntity<ContactResponse> addInteractionToContact(@PathVariable("id") Long contactId, @RequestBody Interaction interactionDto)
     {
-        ContactDto savedContactDto = contactService.AddInteractionToContact(contactId, interactionDto);
-        return new ResponseEntity<>(savedContactDto, HttpStatus.CREATED);
+        Contact savedContactDto = contactService.AddInteractionToContact(contactId, interactionDto);
+        return new ResponseEntity<>(ContactMapperResponse.MapToContactResponse(savedContactDto), HttpStatus.CREATED);
     }
 
     @PostMapping("/{id}/interaction/modify")
     @RequiresPermission({ "CREATE_INTERSECTION", "MODIFY_CONTACT","MODIFY_INTESECTION" })
-    public ResponseEntity<InteractionDto> ModifyInteractionToContact(@PathVariable("id") Long interactionId,
-            @RequestBody InteractionDto interactionDto) {
+    public ResponseEntity<InteractionResponse> ModifyInteractionToContact(@PathVariable("id") Long interactionId,
+            @RequestBody Interaction interactionDto) {
 
-        InteractionDto UpdatedinteractionDto = interactionService.updateInteraction(interactionId, interactionDto);
-        return ResponseEntity.ok(UpdatedinteractionDto);
+        Interaction UpdatedinteractionDto = interactionService.updateInteraction(interactionId, interactionDto);
+        return ResponseEntity.ok(InteractionMapperResponse.mapToInteractionResponse(UpdatedinteractionDto));
     }
 
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     @RequiresPermission({ "ACCESS_CONTACT" })
-    public ResponseEntity<ContactDto> getContactById(@PathVariable("id") Long contactId)
+    public ResponseEntity<ContactResponse> getContactById(@PathVariable("id") Long contactId)
     {
-        ContactDto contactDto = contactService.getContactById(contactId);
-        return ResponseEntity.ok(contactDto);
+        Contact contactDto = contactService.getContactById(contactId);
+        return ResponseEntity.ok(ContactMapperResponse.MapToContactResponse(contactDto));
     }
     
     @GetMapping
     @RequiresPermission({ "ACCESS_CONTACT" })
-    public ResponseEntity<List<ContactDto>> getAllcontact() {
-        List<ContactDto> contacts = contactService.getAllContacts();
-        return ResponseEntity.ok(contacts);
+    public ResponseEntity<List<ContactResponse>> getAllcontact() {
+        List<Contact> contacts = contactService.getAllContacts();
+        return ResponseEntity.ok(
+            contacts.stream().map(ContactMapperResponse::MapToContactResponse)
+            .collect(Collectors.toList())
+        );
     }
     
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     @RequiresPermission({ "MODIFY_CONTACT" })
-    public ResponseEntity<ContactDto> updatecontact(@PathVariable("id") Long contactId,
-            @RequestBody ContactDto contactDto) {
-        ContactDto contact = contactService.updateContact(contactId, contactDto);
-        return ResponseEntity.ok(contact);
+    public ResponseEntity<ContactResponse> updatecontact(@PathVariable("id") Long contactId,
+            @RequestBody Contact contactDto) {
+        Contact contact = contactService.updateContact(contactId, contactDto);
+        return ResponseEntity.ok(ContactMapperResponse.MapToContactResponse(contact));
     }
 
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
     @RequiresPermission({ "DELETE_CONTACT" })
     public ResponseEntity<String> deletecontact(@PathVariable("id") Long contactId) {
         contactService.deleteContact(contactId);

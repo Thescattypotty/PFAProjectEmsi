@@ -2,21 +2,21 @@ package com.example.backend.IServices;
 
 import java.util.List;
 
-import com.example.backend.EntityDto.CompanyDto;
-import com.example.backend.EntityDto.ContactDto;
+import com.example.backend.Entity.Company;
+import com.example.backend.Entity.Contact;
 
 public interface ICompanyService {
 
-    CompanyDto createCompany(CompanyDto companyDto);
+    Company createCompany(Company companyDto);
 
-    CompanyDto getCompanyById(Long companyId);
+    Company getCompanyById(Long companyId);
 
-    List<CompanyDto> getAllCompanys();
+    List<Company> getAllCompanys();
 
     void deleteCompany(Long companyId);
 
-    CompanyDto addContactToCompany(Long companyId , ContactDto contactDto);
+    Company addContactToCompany(Long companyId , Contact contactDto);
 
-    CompanyDto updateCompany(Long companyId , CompanyDto updatedCmCompanyDto);
+    Company updateCompany(Long companyId , Company updatedCmCompanyDto);
 }
 

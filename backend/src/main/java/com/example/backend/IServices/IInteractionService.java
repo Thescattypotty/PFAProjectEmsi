@@ -1,19 +1,19 @@
 package com.example.backend.IServices;
 
 import java.util.List;
-import com.example.backend.EntityDto.InteractionDto;
+import com.example.backend.Entity.Interaction;
 
 public interface IInteractionService {
     
-    InteractionDto createInteraction(InteractionDto interactionDto);
+    Interaction createInteraction(Interaction interactionDto);
 
-    InteractionDto getInteractionById(Long interactionId);
+    Interaction getInteractionById(Long interactionId);
 
-    List<InteractionDto> getInteractionsByContact(Long contactId);
+    List<Interaction> getInteractionsByContact(Long contactId);
 
-    List<InteractionDto> getAllInteractions();
+    List<Interaction> getAllInteractions();
 
-    InteractionDto updateInteraction(Long interactionId, InteractionDto updatedInteractionDto);
+    Interaction updateInteraction(Long interactionId, Interaction updatedInteractionDto);
 
     void deleteInteraction(Long interactionId);
     

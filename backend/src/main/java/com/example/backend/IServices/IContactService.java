@@ -3,22 +3,22 @@ package com.example.backend.IServices;
 import java.util.List;
 
 import com.example.backend.Entity.Company;
-import com.example.backend.EntityDto.ContactDto;
-import com.example.backend.EntityDto.InteractionDto;
+import com.example.backend.Entity.Contact;
+import com.example.backend.Entity.Interaction;
 
 public interface IContactService {
     
-    ContactDto createContact(ContactDto contactDto);
+    Contact createContact(Contact contactDto);
 
-    ContactDto getContactById(Long contactId);
+    Contact getContactById(Long contactId);
 
-    List<ContactDto> getAllContacts();
+    List<Contact> getAllContacts();
 
-    ContactDto updateContact(Long contactId , ContactDto updateContactDto);
+    Contact updateContact(Long contactId , Contact updateContactDto);
 
     void deleteContact(Long contactId);
     
-    ContactDto AddInteractionToContact(Long contactId, InteractionDto updateContactDto);
+    Contact AddInteractionToContact(Long contactId, Interaction updateContactDto);
 
-    ContactDto updateContactCompany(Long contactId , Company company);
+    Contact updateContactCompany(Long contactId , Company company);
 }

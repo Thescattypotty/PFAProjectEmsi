@@ -2,20 +2,16 @@ package com.example.backend.Services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.example.backend.Entity.Contact;
 import com.example.backend.Entity.Interaction;
-import com.example.backend.EntityDto.InteractionDto;
 import com.example.backend.EntityRepository.ContactRepository;
 import com.example.backend.EntityRepository.InteractionRepository;
-import com.example.backend.Enum.EInteraction;
 import com.example.backend.Exception.ResourceNotFoundException;
 import com.example.backend.IServices.IInteractionService;
-import com.example.backend.Mapper.InteractionMapper;
 
 
 @Service
@@ -29,10 +25,8 @@ public class InteractionService implements IInteractionService
     private ContactRepository contactRepository;
 
     @Override
-    public InteractionDto createInteraction(InteractionDto interactionDto) {
-        Interaction interaction = InteractionMapper.mapToInteraction(interactionDto);
-        Interaction savedInteraction = interactionRepository.save(interaction);
-        return InteractionMapper.mapToInteractionDto(savedInteraction);
+    public Interaction createInteraction(Interaction interactionDto) {
+        return interactionRepository.save(interactionDto);
     }
 
     @Override
@@ -44,28 +38,24 @@ public class InteractionService implements IInteractionService
     }
 
     @Override
-    public List<InteractionDto> getAllInteractions() {
-        List<Interaction> interactions = interactionRepository.findAll();
-        return interactions.stream().map((interaction) -> InteractionMapper.mapToInteractionDto(interaction))
-                .collect(Collectors.toList());
+    public List<Interaction> getAllInteractions() {
+        return interactionRepository.findAll();
     }
 
     @Override
-    public InteractionDto getInteractionById(Long interactionId) {
+    public Interaction getInteractionById(Long interactionId) {
         Interaction interactionFinded = interactionRepository.findById(interactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Interaction Does not exist !"));
-        return InteractionMapper.mapToInteractionDto(interactionFinded);
+        return interactionFinded;
     }
 
     @Override
-    public List<InteractionDto> getInteractionsByContact(Long contactId) {
+    public List<Interaction> getInteractionsByContact(Long contactId) {
         Optional<Contact> contact = contactRepository.findById(contactId);
         if(contact.isPresent())
         {
             Contact contactFinded = contact.get();
-            return contactFinded.getInteractions().stream().map(
-                (interaction) -> InteractionMapper.mapToInteractionDto(interaction)
-                ).collect(Collectors.toList());
+            return contactFinded.getInteractions();
         }
         else{
             throw new ResourceNotFoundException("contact seems to not exist");
@@ -73,16 +63,15 @@ public class InteractionService implements IInteractionService
     }
 
     @Override
-    public InteractionDto updateInteraction(Long interactionId, InteractionDto updatedInteractionDto) {
+    public Interaction updateInteraction(Long interactionId, Interaction updatedInteractionDto) {
         Interaction interaction = interactionRepository.findById(interactionId)
                 .orElseThrow(() -> new ResourceNotFoundException("Interaction Does not exist !"));
+
         interaction.setNotes(updatedInteractionDto.getNotes());
         interaction.setDate(updatedInteractionDto.getDate());
-        interaction.setType(EInteraction.valueOf(updatedInteractionDto.getType()));
-
-        Interaction updatedInteraction = interactionRepository.save(interaction);
+        interaction.setType(updatedInteractionDto.getType());
         
-        return InteractionMapper.mapToInteractionDto(updatedInteraction);
+        return interactionRepository.save(interaction);
     }
     
 }
