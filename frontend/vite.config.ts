@@ -4,18 +4,23 @@ import fs from 'fs';
 import react from '@vitejs/plugin-react';
 import visualizer from 'rollup-plugin-visualizer';
 
-const packages = fs.readdirSync(path.resolve(__dirname, '../../packages'));
+const packagesDir = path.resolve(__dirname, './');
+
+if (!fs.existsSync(packagesDir)) {
+    console.error(`Directory not found: ${packagesDir}`);
+    process.exit(1);
+}
+
+// Read the directory contents
+const packages = fs.readdirSync(packagesDir);
 const aliases = packages.reduce((acc, dirName) => {
-    const packageJson = require(path.resolve(
-        __dirname,
-        '../../packages',
-        dirName,
-        'package.json'
-    ));
-    acc[packageJson.name] = path.resolve(
-        __dirname,
-        `${path.resolve('../..')}/packages/${packageJson.name}/src`
-    );
+    const packageJsonPath = path.resolve(packagesDir, dirName, 'package.json');
+    if (fs.existsSync(packageJsonPath)) {
+        const packageJson = require(packageJsonPath);
+        acc[packageJson.name] = path.resolve(packagesDir, dirName, 'src');
+    } else {
+        console.warn(`Package.json not found for ${dirName}`);
+    }
     return acc;
 }, {});
 
