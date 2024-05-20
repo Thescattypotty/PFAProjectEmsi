@@ -3,6 +3,7 @@ package com.example.backend.Services;
 import java.util.regex.Pattern;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import com.example.backend.Exception.TwilioApiException;
 import com.example.backend.IServices.ITwilioService;
@@ -13,6 +14,8 @@ import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
 import com.twilio.type.Twiml;
 
+
+@Service
 public class TwilioService implements ITwilioService
 {
     @Value("${twilio.accountSid}")
